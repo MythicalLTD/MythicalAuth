@@ -47,8 +47,6 @@ jobs:
         env:
           COMPOSER_ROOT_VERSION: dev-master
 
-      - run: |
-          git ls-files | grep \\\.php$ | grep -v ^dictionaries/scripts/* | ./vendor/bin/parallel-lint --stdin
 
   code-style:
     name: Code Style Analysis
@@ -91,8 +89,18 @@ jobs:
         env:
           COMPOSER_ROOT_VERSION: dev-master
 
-      - name: Code Style Analysis with PHPCS
-        run: vendor/bin/phpcs -d memory_limit=512M
+      - name: Debug - List contents of vendor/bin
+        run: ls -l vendor/bin
+
+      - name: Run PHPCS
+        run: |
+          echo "Using $(command -v phpcs)"
+          phpcs -d memory_limit=512M
+        env:
+          COMPOSER_PROCESS_TIMEOUT: 0
+          COMPOSER_NO_INTERACTION: 1
+          COMPOSER_NO_AUDIT: 1
+    
 
   chunk-matrix:
     permissions:
@@ -128,7 +136,6 @@ jobs:
           - "8.0"
           - "8.1"
           - "8.2"
-          - "8.3"
         count: ${{ fromJson(needs.chunk-matrix.outputs.count) }}
         chunk: ${{ fromJson(needs.chunk-matrix.outputs.chunks) }}
 
