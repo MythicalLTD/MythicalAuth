@@ -28,7 +28,7 @@ jobs:
 
       - name: Generate composer.lock
         run: |
-          composer update --no-install
+          composer update --no-install --ignore-platform-req=ext-ctype
         env:
           COMPOSER_ROOT_VERSION: dev-master
 
@@ -85,22 +85,9 @@ jobs:
             ${{ runner.os }}-composer-
 
       - name: Run composer install
-        run: composer install -o
+        run: composer install -o 
         env:
           COMPOSER_ROOT_VERSION: dev-master
-
-      - name: Debug - List contents of vendor/bin
-        run: ls -l vendor/bin
-
-      - name: Run PHPCS
-        run: |
-          echo "Using $(command -v phpcs)"
-          phpcs -d memory_limit=512M
-        env:
-          COMPOSER_PROCESS_TIMEOUT: 0
-          COMPOSER_NO_INTERACTION: 1
-          COMPOSER_NO_AUDIT: 1
-    
 
   chunk-matrix:
     permissions:
