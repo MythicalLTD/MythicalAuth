@@ -36,12 +36,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-composer-
 
-      - name: Run composer install
-        run: composer install -o
-        env:
-          COMPOSER_ROOT_VERSION: dev-master
-
-
   code-style:
     name: Code Style Analysis
     runs-on: ubuntu-latest
@@ -72,11 +66,6 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-
-
-      - name: Run composer install
-        run: composer install -o 
-        env:
-          COMPOSER_ROOT_VERSION: dev-master
 
   chunk-matrix:
     permissions:
@@ -150,8 +139,3 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-
-
-      - name: Run composer install
-        run: composer install -o
-        env:
-          COMPOSER_ROOT_VERSION: dev-master
