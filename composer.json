@@ -1,0 +1,17 @@
+{
+    "name": "mythicalsystems/mythicalauth",
+    "description": "This is a public authentication system that can be used everywhere and has powerful and advanced features.",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "NaysKutzu",
+            "email": "ghermancassian2008@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "ecoal95/php-router": "dev-master",
+        "phpmailer/phpmailer": "dev-master"
+    }
+}
