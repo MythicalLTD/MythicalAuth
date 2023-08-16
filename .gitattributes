@@ -1,0 +1,5 @@
+public/assets/* linguist-generated
+*.css linguist-vendored
+*.js linguist-vendored
+*.pug linguist-vendored
+*.scss linguist-vendored
