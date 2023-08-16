@@ -53,11 +53,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                   $banned = $row['banned'];
                   if ($banned == "") {
                     $conn->query("UPDATE `users` SET `last_ip` = '".encrypt($ip_address,$ekey)."' WHERE `users`.`id` = ".$row['id'].";");
+                    $token = $row['usertoken'];
                     $cookie_name = 'token';
-                    $cookie_value = decrypt($row['usertoken'],$ekey);
+                    $cookie_value = $token;
                     setcookie($cookie_name, $cookie_value, time() + (10 * 365 * 24 * 60 * 60), '/');
                     $conn->close();
-                    header('location: /dashboard?s=Welcome to MythicalSystems');
+                    if (isset($_GET['r'])) {
+                      header('location: ' . $_GET['r']);
+                    } else {
+                      header('location: /dashboard?s=Welcome to MythicalSystems');
+                    }
                     die();
                   } else {
                     header("location: /login?e=Sorry, but this account is banned for: ".$banned);
@@ -107,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <?php
-  include(__DIR__ . '/../components/head.php');
+  include(__DIR__ . '/../components/embed_head.php');
   ?>
   <title>
     <?= $_CONFIG['app_name'] ?> - Login

@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <?php
-    include(__DIR__ . '/../components/head.php');
+    include(__DIR__ . '/../components/embed_head.php');
     ?>
     <title>
         <?= $_CONFIG['app_name'] ?> - Forbidden

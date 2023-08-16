@@ -1,3 +1,3 @@
 <?php 
-header('location: https://mythicalsystems.tech');
+header('location: /dashboard');
 ?>

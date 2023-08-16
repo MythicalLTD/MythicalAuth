@@ -34,6 +34,11 @@ $router->add('/verify', function () {
     require("../view/auth/verify.php");
 });
 
+$router->add('/logout', function () {
+    require("../include/main.php");
+    require("../view/auth/logout.php");
+});
+
 $router->add('/forgot-password', function () {
     require("../include/main.php");
     require("../view/auth/forgot-password.php");
@@ -47,6 +52,21 @@ $router->add('/reset-password', function () {
 $router->add('/dashboard', function () {
     require("../include/main.php");
     require("../view/dashboard.php");
+});
+
+$router->add('/connections', function () {
+    require("../include/main.php");
+    require("../view/connections.php");
+});
+
+$router->add('/admin/users/view', function () {
+    require("../include/main.php");
+    require("../view/admin/users/view_users.php");
+});
+
+$router->add('/admin/users/edit', function () {
+    require("../include/main.php");
+    require("../view/admin/users/edit_user.php");
 });
 
 $router->add('/e/404', function () {

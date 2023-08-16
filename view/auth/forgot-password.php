@@ -268,7 +268,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <?php
-  include(__DIR__ . '/../components/head.php');
+  include(__DIR__ . '/../components/embed_head.php');
   ?>
   <title>
     <?= $_CONFIG['app_name'] ?> - Forgot Password
