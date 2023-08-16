@@ -44,6 +44,11 @@ $router->add('/reset-password', function () {
     require("../view/auth/reset-password.php");
 });
 
+$router->add('/dashboard', function () {
+    require("../include/main.php");
+    require("../view/dashboard.php");
+});
+
 $router->add('/e/404', function () {
     require("../include/main.php");
     require("../view/errors/404.php");
