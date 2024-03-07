@@ -8,8 +8,8 @@ try {
 } catch (Exception $e) {
     die('Hello, it looks like you did not run:  <code>composer install --no-dev --optimize-autoloader</code> Please run that and refresh');
 }
-require("../functions/https.php");
-if (!isHTTPS()) {
+use MythicalSystems\Main; 
+if (!Main::isHTTPS()) {
    die('Hello, it looks like you are trying to access the application over HTTP when the application only runs on HTTPS! Please use HTTPS for the application to run!');
 }
 $router = new \Router\Router();

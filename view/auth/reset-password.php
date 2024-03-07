@@ -1,11 +1,14 @@
 <?php
-include('../include/php-csrf.php');
+use MythicalSystems\CloudFlare\CloudFlare;
+use MythicalSystems\CloudFlare\Turnstile;
+use MythicalSystems\Utils\CSRFHandler;
+
 session_start();
-$csrf = new CSRF();
+$csrf = new CSRFHandler();
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (isset($_GET['code']) && !empty($_GET['code'])) {
         $mmmcode = mysqli_real_escape_string($conn, $_GET['code']);
-        $queryd = "SELECT * FROM `resetpasswords` WHERE `resetpasswords`.`user-resetkeycode` = '".$mmmcode."';";
+        $queryd = "SELECT * FROM `resetpasswords` WHERE `resetpasswords`.`user-resetkeycode` = '".mysqli_real_escape_string($conn, $mmmcode)."';";
         $resultd = mysqli_query($conn, $queryd);
         if (mysqli_num_rows($resultd) > 0) {
             $ucode = mysqli_fetch_assoc($resultd);     
@@ -13,8 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 if ($csrf->validate('reset-form')) {
                     $upassword = mysqli_real_escape_string($conn, $_GET['password']);
                     $password = password_hash($upassword, PASSWORD_BCRYPT);
-                    $updateQuery = "UPDATE `users` SET `password` = '$password' WHERE `users`.`usertoken` = '".$ucode['usertoken']."'";
-                    $deleteQuery = "DELETE FROM resetpasswords WHERE `resetpasswords`.`id` = '".$ucode['id']."'";                    
+                    $updateQuery = "UPDATE `users` SET `password` = '".mysqli_real_escape_string($conn, $password)."' WHERE `users`.`usertoken` = '".mysqli_real_escape_string($conn, $ucode['usertoken'])."'";
+                    $deleteQuery = "DELETE FROM resetpasswords WHERE `resetpasswords`.`id` = '".mysqli_real_escape_string($conn, $ucode['id'])."'";                    
                     $conn->query($updateQuery);
                     $conn->query($deleteQuery);
                     $conn->close();

@@ -1,2 +1,4 @@
 /vendor/
 config.php
+logs/auth.app-error.log
+logs/auth.app-access.log

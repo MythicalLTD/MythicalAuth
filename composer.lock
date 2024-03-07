@@ -4,39 +4,34 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e62669ff62961a05a3a9e84b9cef1fdd",
+    "content-hash": "9c6be94ae459b50404ba97a50713744b",
     "packages": [
         {
-            "name": "ecoal95/php-router",
-            "version": "dev-master",
+            "name": "mythicalsystems/core",
+            "version": "dev-main",
             "source": {
                 "type": "git",
-                "url": "https://github.com/emilio/php-router.git",
-                "reference": "55ae2f3a6417a2327715402edb7b404001c5a04f"
+                "url": "https://github.com/MythicalLTD/MythicalCore.git",
+                "reference": "45102e99961a3e4e80307eb60e656d6cbaf4c954"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/emilio/php-router/zipball/55ae2f3a6417a2327715402edb7b404001c5a04f",
-                "reference": "55ae2f3a6417a2327715402edb7b404001c5a04f",
+                "url": "https://api.github.com/repos/MythicalLTD/MythicalCore/zipball/45102e99961a3e4e80307eb60e656d6cbaf4c954",
+                "reference": "45102e99961a3e4e80307eb60e656d6cbaf4c954",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0"
-            },
-            "require-dev": {
-                "ext-xdebug": "*",
-                "phpdocumentor/phpdocumentor": "2.8.*",
-                "phpunit/phpunit": "4.8.*",
-                "squizlabs/php_codesniffer": "2.*"
+                "php": ">=8.1.0"
             },
             "default-branch": true,
             "type": "library",
             "autoload": {
                 "files": [
-                    "src/php-5.3-support.php"
+                    "src/php-6.0-support.php"
                 ],
                 "psr-0": {
-                    "Router": "src"
+                    "Router": "src",
+                    "MythicalSystems": "src"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -45,24 +40,41 @@
             ],
             "authors": [
                 {
-                    "name": "Emilio Cobos Álvarez",
-                    "email": "emiliocobos@usal.es",
-                    "homepage": "http://emiliocobos.net",
-                    "role": "Developer"
+                    "name": "NaysKutzu",
+                    "email": "nayskutzu@mythicalsystems.me",
+                    "homepage": "https://mythicalsystems.me",
+                    "role": "Owner"
                 }
             ],
-            "description": "Minimal routing library",
-            "homepage": "https://github.com/ecoal95/php-router",
+            "description": "The core composer packages for all MythicalSystems projects!",
+            "homepage": "https://github.com/mythicalltd/mythicalcore",
             "keywords": [
-                "route",
-                "router",
-                "routing"
+                "kosmapanel",
+                "mythicalclient",
+                "mythicalcore",
+                "mythicaldash",
+                "mythicalltd",
+                "mythicalsystems",
+                "nayskutzu",
+                "php-router",
+                "phprouter",
+                "router"
             ],
             "support": {
-                "issues": "https://github.com/emilio/php-router/issues",
-                "source": "https://github.com/emilio/php-router/tree/v1.0.3"
+                "chat": "https://discord.gg/Tswkrhreu3",
+                "docs": "https://docs.mythicalsystems.me",
+                "forum": "https://discord.gg/Tswkrhreu3",
+                "issues": "https://github.com/mythicalltd/mythicalcore/issues",
+                "source": "https://github.com/MythicalLTD/MythicalCore/tree/main",
+                "wiki": "https://docs.mythicalsystems.me"
             },
-            "time": "2015-08-23T22:20:07+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/nayskutzu",
+                    "type": "GitHub"
+                }
+            ],
+            "time": "2024-03-07T09:23:32+00:00"
         },
         {
             "name": "phpmailer/phpmailer",
@@ -70,12 +82,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPMailer/PHPMailer.git",
-                "reference": "57f994d89eacac82dd0e40e4657eb6054136a7ea"
+                "reference": "5251d331249900a8551442391265a3ec20200c8f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/57f994d89eacac82dd0e40e4657eb6054136a7ea",
-                "reference": "57f994d89eacac82dd0e40e4657eb6054136a7ea",
+                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/5251d331249900a8551442391265a3ec20200c8f",
+                "reference": "5251d331249900a8551442391265a3ec20200c8f",
                 "shasum": ""
             },
             "require": {
@@ -95,6 +107,7 @@
                 "yoast/phpunit-polyfills": "^1.0.4"
             },
             "suggest": {
+                "decomplexity/SendOauth2": "Adapter for using XOAUTH2 authentication",
                 "ext-mbstring": "Needed to send email in multibyte encoding charset or decode encoded addresses",
                 "ext-openssl": "Needed for secure SMTP sending and DKIM signing",
                 "greew/oauth2-azure-provider": "Needed for Microsoft Azure XOAUTH2 authentication",
@@ -143,19 +156,19 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-07-12T10:16:02+00:00"
+            "time": "2024-01-31T22:05:36+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "stability-flags": {
-        "ecoal95/php-router": 20,
-        "phpmailer/phpmailer": 20
+        "phpmailer/phpmailer": 20,
+        "mythicalsystems/core": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }

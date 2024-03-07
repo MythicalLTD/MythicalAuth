@@ -1,17 +1,45 @@
 {
     "name": "mythicalsystems/mythicalauth",
-    "description": "This is a public authentication system that can be used everywhere and has powerful and advanced features.",
+    "description": "This is the project for MythicalID the main page where you use oauth2 and tickets",
     "type": "project",
     "license": "MIT",
+    "homepage": "https://github.com/mythicalltd/mythicalauth",
+    "keywords": [
+        "mythicalsystems",
+        "mythicaldash",
+        "mythicalclient",
+        "nayskutzu",
+        "mythicalauth",
+        "kosmapanel"
+    ],
     "authors": [
         {
             "name": "NaysKutzu",
-            "email": "ghermancassian2008@gmail.com"
+            "email": "nayskutzu@gmail.com",
+            "homepage": "https://mythicalsystems.me",
+            "role": "Owner"
         }
     ],
-    "minimum-stability": "dev",
+    "support": {
+        "wiki": "https://docs.mythicalsystems.me",
+        "docs": "https://docs.mythicalsystems.me",
+        "issues": "https://github.com/mythicalltd/mythicalauth/issues",
+        "source": "https://github.com/mythicalltd/mythicalauth",
+        "chat": "https://discord.gg/fcrZcYvbnq"
+    },
+    "funding": [
+        {
+            "type": "GitHub",
+            "url": "https://github.com/sponsors/nayskutzu"
+        },
+        {
+            "type": "PayPal",
+            "url": "https://github.com/sponsors/nayskutzu"
+        }
+    ],
+    "minimum-stability": "stable",
     "require": {
-        "ecoal95/php-router": "dev-master",
-        "phpmailer/phpmailer": "dev-master"
+        "phpmailer/phpmailer": "dev-master",
+        "mythicalsystems/core": "dev-main"
     }
 }

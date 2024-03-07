@@ -1,9 +1,11 @@
 <?php
+use MythicalSystems\Utils\CSRFHandler;
+use MythicalSystems\Utils\EncryptionHandler as eh;
+
 include(__DIR__ . '/requirements/page.php');
-include(__DIR__ . '/../include/php-csrf.php');
-$csrf = new CSRF();
+$csrf = new CSRFHandler();
 if (isset($_POST['edit_user'])) {
-    $userdb = $conn->query("SELECT * FROM users WHERE usertoken = '" . $_COOKIE['token'] . "'")->fetch_array();
+    $userdb = $conn->query("SELECT * FROM users WHERE usertoken = '" . mysqli_real_escape_string($conn, $_COOKIE['token']) . "'")->fetch_array();
     $username = mysqli_real_escape_string($conn, $_POST['username']);
     $firstName = mysqli_real_escape_string($conn, $_POST['firstName']);
     $lastName = mysqli_real_escape_string($conn, $_POST['lastName']);
@@ -19,9 +21,9 @@ if (isset($_POST['edit_user'])) {
                 die();
             }
         } else {
-            $conn->query("UPDATE `users` SET `username` = '" . encrypt($username,$ekey) . "' WHERE `users`.`usertoken` = '" . $_COOKIE['token'] . "';");
-            $conn->query("UPDATE `users` SET `first_name` = '" . encrypt($firstName,$ekey) . "' WHERE `users`.`usertoken` = '" . $_COOKIE['token'] . "';");
-            $conn->query("UPDATE `users` SET `last_name` = '" . encrypt($lastName,$ekey) . "' WHERE `users`.`usertoken` = '" . $_COOKIE['token'] . "';");
+            $conn->query("UPDATE `users` SET `username` = '" . eh::encrypt($username, $ekey) . "' WHERE `users`.`usertoken` = '" . $_COOKIE['token'] . "';");
+            $conn->query("UPDATE `users` SET `first_name` = '" . eh::encrypt($firstName,$ekey) . "' WHERE `users`.`usertoken` = '" . $_COOKIE['token'] . "';");
+            $conn->query("UPDATE `users` SET `last_name` = '" . eh::encrypt($lastName,$ekey) . "' WHERE `users`.`usertoken` = '" . $_COOKIE['token'] . "';");
             $conn->query("UPDATE `users` SET `avatar` = '" . $avatar . "' WHERE `users`.`usertoken` = '" . $_COOKIE['token'] . "';");
             $conn->query("UPDATE `users` SET `email` = '" . $email . "' WHERE `users`.`usertoken` = '" . $_COOKIE['token'] . "';");
             $conn->close();
@@ -48,8 +50,8 @@ else if (isset($_POST['uresetpwd'])) {
             setcookie($name, '', time()-1000);
             setcookie($name, '', time()-1000, '/');
         }
-        $skey = generate_keynoinfo();
-        $conn->query("INSERT INTO `resetpasswords` (`email`, `usertoken`, `user-resetkeycode`, `ip_address`) VALUES ('" . $userdb['email'] . "', '" . $userdb['usertoken'] . "', '" . $skey . "', '" . decrypt($userdb['last_ip'],$ekey) . "');");
+        $skey = eh::generateKey(24);
+        $conn->query("INSERT INTO `resetpasswords` (`email`, `usertoken`, `user-resetkeycode`, `ip_address`) VALUES ('" . $userdb['email'] . "', '" . $userdb['usertoken'] . "', '" . $skey . "', '" . eh::decrypt($userdb['last_ip'],$ekey) . "');");
         $conn->close();
         header('location: /reset-password?code='.$skey);
         die();
@@ -83,11 +85,12 @@ else if (isset($_POST['resetukey'])) {
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
     if (mysqli_num_rows($result) > 0) {
-        $user_info = $conn->query("SELECT * FROM users WHERE usertoken = '" . $_COOKIE['token'] . "'")->fetch_array();
+        $user_info = $conn->query("SELECT * FROM users WHERE usertoken = '" . mysqli_real_escape_string($conn, $_COOKIE['token']) . "'")->fetch_array();
         $email = $user_info['email'];
         $password = $user_info['password'];
-        $skey = generate_key($email,$password);
-        $conn->query("UPDATE `users` SET `usertoken` = '" . $skey . "' WHERE `users`.`usertoken` = '" . $_COOKIE['token'] . "';");
+        //$newkey = generate_key($email,$password);
+        $newkey = eh::generateKey(24);
+        $conn->query("UPDATE `users` SET `usertoken` = '" . $newkey . "' WHERE `users`.`usertoken` = '" . mysqli_real_escape_string($conn, $_COOKIE['token']) . "';");
         $conn->close();
         header('location: /dashboard?s=We updated the user settings in the database');
         die();
@@ -106,7 +109,7 @@ else if (isset($_POST['resetukey'])) {
 <head>
     <?php include(__DIR__ . '/requirements/head.php'); ?>
     <title>
-        <?= $_CONFIG['app_name'] ?> | Dashboard
+        <?= $_CONFIG['app_name'] ?> - Dashboard
     </title>
 </head>
 
@@ -141,19 +144,19 @@ else if (isset($_POST['resetukey'])) {
                                                 <div class="mb-3 col-md-6">
                                                     <label for="username" class="form-label">Username</label>
                                                     <input class="form-control" type="text" id="username"
-                                                        name="username" value="<?= decrypt($userdb['username'],$ekey) ?>"
+                                                        name="username" value="<?= eh::decrypt($userdb['username'],$ekey) ?>"
                                                         placeholder="jhondoe" />
                                                 </div>
                                                 <div class="mb-3 col-md-6">
                                                     <label for="firstName" class="form-label">First Name</label>
                                                     <input class="form-control" type="text" id="firstName"
-                                                        name="firstName" value="<?= decrypt($userdb['first_name'],$ekey) ?>"
+                                                        name="firstName" value="<?= eh::decrypt($userdb['first_name'],$ekey) ?>"
                                                         autofocus />
                                                 </div>
                                                 <div class="mb-3 col-md-6">
                                                     <label for="lastName" class="form-label">Last Name</label>
                                                     <input class="form-control" type="text" name="lastName"
-                                                        id="lastName" value="<?= decrypt($userdb['last_name'],$ekey) ?>" />
+                                                        id="lastName" value="<?= eh::decrypt($userdb['last_name'],$ekey) ?>" />
                                                 </div>
                                                 <div class="mb-3 col-md-6">
                                                     <label for="email" class="form-label">E-mail</label>

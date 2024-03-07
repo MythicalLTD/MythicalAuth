@@ -1,42 +1,18 @@
 <?php
-include(__DIR__ . '/../../include/php-csrf.php');
+use MythicalSystems\Utils\CSRFHandler;
+use MythicalSystems\CloudFlare\Turnstile;
+use MythicalSystems\CloudFlare\CloudFlare;
+use MythicalSystems\Utils\EncryptionHandler as eh;
 session_start();
-$csrf = new CSRF();
-function validate_captcha($cf_turnstile_response, $cf_connecting_ip, $cf_secret_key)
-{
-  $data = array(
-    "secret" => $cf_secret_key,
-    "response" => $cf_turnstile_response,
-    "remoteip" => $cf_connecting_ip
-  );
+$csrf = new CSRFHandler();
 
-  $url = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
-
-  $options = array(
-    "http" => array(
-      "header" => "Content-Type: application/x-www-form-urlencoded\r\n",
-      "method" => "POST",
-      "content" => http_build_query($data)
-    )
-  );
-  $context = stream_context_create($options);
-  $result = file_get_contents($url, false, $context);
-
-  if ($result == false) {
-    return false;
-  }
-
-  $result = json_decode($result, true);
-
-  return $result["success"];
-}
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (isset($_POST['submit'])) {
     if ($csrf->validate('login-form')) {
-      $ip_address = getclientip();
+      $ip_address = mysqli_real_escape_string($conn, CloudFlare::getRealUserIP());
       $cf_turnstile_response = $_POST["cf-turnstile-response"];
       $cf_connecting_ip = $ip_address;
-      $captcha_success = validate_captcha($cf_turnstile_response, $cf_connecting_ip, $_CONFIG['cf_secret_key']);
+      $captcha_success = TurnStile::validate($cf_turnstile_response, $cf_connecting_ip, $_CONFIG['cf_secret_key']);
       if ($captcha_success) {
         $email = mysqli_real_escape_string($conn, $_POST['email']);
         $upassword = mysqli_real_escape_string($conn, $_POST['password']);
@@ -52,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (password_verify($upassword,$hashedPassword)) {
                   $banned = $row['banned'];
                   if ($banned == "") {
-                    $conn->query("UPDATE `users` SET `last_ip` = '".encrypt($ip_address,$ekey)."' WHERE `users`.`id` = ".$row['id'].";");
+                    $conn->query("UPDATE `users` SET `last_ip` = '".mysqli_real_escape_string($conn, eh::encrypt($ip_address,$ekey))."' WHERE `users`.`id` = ".mysqli_real_escape_string($conn, $row['id']).";");
                     $token = $row['usertoken'];
                     $cookie_name = 'token';
                     $cookie_value = $token;
@@ -61,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     if (isset($_GET['r'])) {
                       header('location: ' . $_GET['r']);
                     } else {
-                      header('location: /dashboard?s=Welcome to MythicalSystems');
+                      header('location: /dashboard?s=Welcome to '.$_CONFIG['app_name']);
                     }
                     die();
                   } else {

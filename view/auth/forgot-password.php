@@ -1,46 +1,21 @@
 <?php
-include(__DIR__ . '/../../include/php-csrf.php');
+use MythicalSystems\Utils\CSRFHandler;
+use MythicalSystems\CloudFlare\Turnstile;
+use MythicalSystems\CloudFlare\CloudFlare;
+use MythicalSystems\Utils\EncryptionHandler as eh;
 session_start();
-$csrf = new CSRF();
+$csrf = new CSRFHandler();
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-function validate_captcha($cf_turnstile_response, $cf_connecting_ip, $cf_secret_key)
-{
-  $data = array(
-    "secret" => $cf_secret_key,
-    "response" => $cf_turnstile_response,
-    "remoteip" => $cf_connecting_ip
-  );
-
-  $url = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
-
-  $options = array(
-    "http" => array(
-      "header" => "Content-Type: application/x-www-form-urlencoded\r\n",
-      "method" => "POST",
-      "content" => http_build_query($data)
-    )
-  );
-  $context = stream_context_create($options);
-  $result = file_get_contents($url, false, $context);
-
-  if ($result == false) {
-    return false;
-  }
-
-  $result = json_decode($result, true);
-
-  return $result["success"];
-}
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (isset($_POST['submit'])) {
     if ($csrf->validate('reset-form')) {
-      $ip_address = getclientip();
+      $ip_address = mysqli_real_escape_string($conn, CloudFlare::getRealUserIP());
       $cf_turnstile_response = $_POST["cf-turnstile-response"];
       $cf_connecting_ip = $ip_address;
 
-      $captcha_success = validate_captcha($cf_turnstile_response, $cf_connecting_ip, $_CONFIG['cf_secret_key']);
+      $captcha_success = TurnStile::validate($cf_turnstile_response, $cf_connecting_ip, $_CONFIG['cf_secret_key']);
       if ($captcha_success) {
         $email = mysqli_real_escape_string($conn, $_POST['email']);
         if (!$email == "") {
@@ -55,9 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               $smtpPassword = $_CONFIG['smtpPassword'];
               $fromEmail = $_CONFIG['smtpFromEmail'];
               $toEmail = $email;
-              $skey = generate_keynoinfo();
-              $first_name = decrypt($userdbdv['first_name'], $ekey);
-              $last_name = decrypt($userdbdv['last_name'], $ekey);
+              $skey = eh::generateKey(12);
+              $first_name = eh::decrypt($userdbdv['first_name'], $ekey);
+              $last_name = eh::decrypt($userdbdv['last_name'], $ekey);
               $usr_token = $userdbdv['usertoken'];
               $subject = $_CONFIG['smtpFromName'] . " password reset!";
               $message = '
@@ -217,7 +192,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </body>
                           
                     </html>';
-              $mail = new PHPMailer(true);
+              $mail = new PHPMailer(false);
               $mail->isSMTP();
               $mail->Host = $smtpHost;
               $mail->Port = $smtpPort;
@@ -232,7 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               $mail->Body = $message;
               try {
                 $mail->send();
-                $conn->query("INSERT INTO `resetpasswords` (`email`, `usertoken`, `user-resetkeycode`, `ip_address`) VALUES ('" . $email . "', '" . $usr_token . "', '" . $skey . "', '" . $ip_address . "');");
+                $conn->query("INSERT INTO `resetpasswords` (`email`, `usertoken`, `user-resetkeycode`, `ip_address`) VALUES ('" . mysqli_real_escape_string($conn, $email) . "', '" . mysqli_real_escape_string($conn, $usr_token) . "', '" . mysqli_real_escape_string($conn, $skey) . "', '" . mysqli_real_escape_string($conn, $ip_address) . "');");
                 $conn->close();
                 die('<script>window.location.href = "' . $appURL . '/login?s=We sent you a email. Please check your emails.";</script>');
               } catch (Exception $e) {

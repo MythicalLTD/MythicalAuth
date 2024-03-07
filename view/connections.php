@@ -7,7 +7,7 @@ $offset = ($page - 1) * $ConnectionsPerPage;
 $searchKeyword = isset($_GET['search']) ? $_GET['search'] : '';
 $searchCondition = '';
 if (!empty($searchKeyword)) {
-    $searchCondition = " WHERE `sitename` LIKE '%$searchKeyword%' OR `siteuuid` LIKE '%$searchKeyword%'";
+    $searchCondition = " WHERE user = '" . $userdb['id'] . "' AND `site` LIKE '%" . mysqli_real_escape_string($conn, $searchKeyword) . "%' OR `id` LIKE '%" . mysqli_real_escape_string($conn, $searchKeyword) . "%'";
 }
 $connections_query = "SELECT * FROM connections" . $searchCondition . " ORDER BY `id` LIMIT $offset, $ConnectionsPerPage";
 $result = $conn->query($connections_query);
@@ -15,6 +15,18 @@ $TotalConnectionsQuery = "SELECT COUNT(*) AS total_connections FROM connections"
 $totalResult = $conn->query($TotalConnectionsQuery);
 $TotalConnections = $totalResult->fetch_assoc()['total_connections'];
 $totalPages = ceil($TotalConnections / $ConnectionsPerPage);
+
+if (isset($_GET['id']) && !$_GET['id'] == null) {
+    $connectionid = mysqli_real_escape_string($conn, $_GET['id']);
+    $connectiondb = $conn->query("SELECT * FROM connections WHERE id = '" . $connectionid . "'")->fetch_array();
+    $siteid = mysqli_real_escape_string($conn, $connectiondb['site']);
+    $sitedb = $conn->query("SELECT * FROM sites WHERE id = '" . $siteid . "'")->fetch_array();
+    ?>
+    <script>
+        alert("<?= $_CONFIG['app_name']?> - Connection INFO\nID: <?= $connectionid ?>\nStatus: <?= $connectiondb['status']?>\nDate: <?= $connectiondb['date']?>\n\nSite ID: <?= $siteid ?>\nName: <?= $sitedb['name']?>\nURL: <?= $sitedb['url']?>\nUUID: <?= $sitedb['uuid']?>\nPublic Key: <?= $sitedb['public_key']?>\nDate: <?= $sitedb['date']?>");
+    </script>
+    <?php
+}
 ?>
 
 <!DOCTYPE html>
@@ -24,7 +36,7 @@ $totalPages = ceil($TotalConnections / $ConnectionsPerPage);
 <head>
     <?php include(__DIR__ . '/requirements/head.php'); ?>
     <title>
-        <?= $_CONFIG['app_name'] ?> | Connections
+        <?= $_CONFIG['app_name'] ?> - Connections
     </title>
     <style>
         .avatar-image {
@@ -38,7 +50,7 @@ $totalPages = ceil($TotalConnections / $ConnectionsPerPage);
 </head>
 
 <body>
-   <!--<div id="preloader" class="discord-preloader">
+    <!--<div id="preloader" class="discord-preloader">
         <div class="spinner"></div>
     </div>-->
     <div class="layout-wrapper layout-content-navbar">
@@ -53,8 +65,8 @@ $totalPages = ceil($TotalConnections / $ConnectionsPerPage);
                         <!-- Search Form -->
                         <form class="mt-4">
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" placeholder="Search for connections..." name="search"
-                                    value="<?= $searchKeyword ?>">
+                                <input type="text" class="form-control" placeholder="Search for connections..."
+                                    name="search" value="<?= $searchKeyword ?>">
                                 <button class="btn btn-outline-secondary" type="submit">Search</button>
                             </div>
                         </form>
@@ -66,25 +78,42 @@ $totalPages = ceil($TotalConnections / $ConnectionsPerPage);
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th>Website name</th>
-                                            <th>Website UWID</th>
+                                            <th>Name</th>
+                                            <th>Status</th>
+                                            <th>Website</th>
                                             <th>Connected at</th>
-                                            <!--<th>Action</th>-->
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody class="table-border-bottom-0">
                                         <?php
                                         if ($result->num_rows > 0) {
                                             while ($row = $result->fetch_assoc()) {
-                                                echo "<tr>";
-                                                echo "<td>" . $row['sitename'] . "</td>";
-                                                echo "<td>" . $row['uwid'] . "</td>";
-                                                echo "<td>" . $row['date'] . "</td>";
-                                                echo "<!--<td><a href=\"/user/profile?id=" . $row['id'] . "\" class=\"btn btn-primary\">Show</a></td>-->";
-                                                echo "</tr>";
+                                                $siteid = mysqli_real_escape_string($conn, $row['site']);
+                                                $sitedb = $conn->query("SELECT * FROM sites WHERE id = '" . $siteid . "'")->fetch_array();
+                                                ?>
+                                                <tr>
+                                                    <td>
+                                                        <?= $sitedb['name'] ?>
+                                                    </td>
+                                                    <td>
+                                                        <?= $row['status'] ?>
+                                                    </td>
+                                                    <td><a href="<?= $sitedb['url'] ?>" target="_blank">
+                                                            <?= $sitedb['url'] ?>
+                                                        </a></td>
+                                                    <td>
+                                                        <?= $row['date'] ?>
+                                                    </td>
+                                                    <td><a href="/connections?id=<?= $row['id'] ?>"
+                                                            class="btn btn-primary">Show</a></td>
+                                                </tr>
+                                                <?php
                                             }
                                         } else {
-                                            echo '<td class="text-center" colspan="5"><br>No connections found.<br><br>&nbsp;</td>';
+                                            ?>
+                                            <td class="text-center" colspan="5"><br>No connections found.<br><br>&nbsp;</td>
+                                            <?php
                                         }
                                         ?>
                                     </tbody>

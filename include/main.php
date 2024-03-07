@@ -71,13 +71,9 @@ try {
 } catch (Exception $ex) {
     die($error_500);
 }
-include(__DIR__.'/../functions/getclientip.php');
 $prot = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
 $svhost = $_SERVER['HTTP_HOST'];
 $appURL = $prot . '://' . $svhost;
-include(__DIR__.'/../functions/passwordgen.php');
-include(__DIR__.'/../functions/keygen.php');
-include(__DIR__.'/../functions/encryption.php');
 if ($_CONFIG['app_EncryptionKey'] == "" || $_CONFIG['app_EncryptionKey'] == "1234" || $_CONFIG['app_EncryptionKey'] == "test" || $_CONFIG['app_EncryptionKey'] == "1234")  {
     die('[MythicalAuth] Faild to start MythicalAuth: Please set a strong encryption key in config.php');
 } else {

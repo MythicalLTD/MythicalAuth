@@ -1,4 +1,5 @@
 <?php
+use MythicalSystems\Utils\EncryptionHandler as eh;
 include(__DIR__ . '/../../requirements/page.php');
 include(__DIR__ . '/../../requirements/admin.php');
 $usersPerPage = 20;
@@ -88,7 +89,7 @@ $totalPages = ceil($totalUsers / $usersPerPage);
                                             while ($row = $result->fetch_assoc()) {
                                                 echo "<tr>";
                                                 echo "<td><img src='" . $row['avatar'] . "' alt='Avatar' class='rounded-circle avatar-image'></td>";
-                                                echo "<td>" . decrypt($row['username'],$ekey). "</td>";
+                                                echo "<td>" . eh::decrypt($row['username'],$ekey). "</td>";
                                                 echo "<td>" . $row['email'] . "</td>";
                                                 echo "<td>" . $row['role'] . "</td>";
                                                 echo "<td>" . $row['registred'] . "</td>";

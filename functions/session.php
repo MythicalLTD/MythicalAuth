@@ -5,7 +5,7 @@ if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER
 }
 $fullUrl .= "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 if (isset($_COOKIE['token'])) {
-  $session_id = $_COOKIE['token'];
+  $session_id = mysqli_real_escape_string($conn, $_COOKIE['token']);
   $query = "SELECT * FROM users WHERE usertoken='".$session_id."'";
   $result = mysqli_query($conn, $query);
   if (mysqli_num_rows($result) > 0) {

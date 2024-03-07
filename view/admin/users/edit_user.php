@@ -1,4 +1,5 @@
 <?php
+use MythicalSystems\Utils\EncryptionHandler as eh;
 include(__DIR__ . '/../../requirements/page.php');
 include(__DIR__ . '/../../requirements/admin.php');
 
@@ -18,8 +19,8 @@ if (isset($_GET['edit_user'])) {
             $avatar = mysqli_real_escape_string($conn, $_GET['avatar']);
             $role = mysqli_real_escape_string($conn, $_GET['role']);
             if (!$username == "" || $firstName == "" || $lastName == "" || $email == "" || $avatar == "" || $role == "") {
-                if (!decrypt($user_info['username'], $ekey) == $username || !$email == $user_info['email']) {
-                    $check_query = "SELECT * FROM users WHERE username = '" . decrypt($username, $ekey) . "' OR email = '$email'";
+                if (!eh::decrypt($user_info['username'], $ekey) == $username || !$email == $user_info['email']) {
+                    $check_query = "SELECT * FROM users WHERE username = '" . eh::decrypt($username, $ekey) . "' OR email = '$email'";
                     $result = mysqli_query($conn, $check_query);
                     if (mysqli_num_rows($result) > 0) {
                         header('location: /admin/users/edit?e=Username or email already exists. Please choose a different one&id=' . $_GET['id']);
@@ -33,9 +34,9 @@ if (isset($_GET['edit_user'])) {
                     } else {
                         $conn->query("UPDATE `users` SET `role` = 'default' WHERE `users`.`id` = " . $_GET['id'] . ";");
                     }
-                    $conn->query("UPDATE `users` SET `username` = '" . encrypt($username, $ekey) . "' WHERE `users`.`id` = " . $_GET['id'] . ";");
-                    $conn->query("UPDATE `users` SET `first_name` = '" . encrypt($firstName, $ekey) . "' WHERE `users`.`id` = " . $_GET['id'] . ";");
-                    $conn->query("UPDATE `users` SET `last_name` = '" . encrypt($lastName, $ekey) . "' WHERE `users`.`id` = " . $_GET['id'] . ";");
+                    $conn->query("UPDATE `users` SET `username` = '" . eh::encrypt($username, $ekey) . "' WHERE `users`.`id` = " . $_GET['id'] . ";");
+                    $conn->query("UPDATE `users` SET `first_name` = '" . eh::encrypt($firstName, $ekey) . "' WHERE `users`.`id` = " . $_GET['id'] . ";");
+                    $conn->query("UPDATE `users` SET `last_name` = '" . eh::encrypt($lastName, $ekey) . "' WHERE `users`.`id` = " . $_GET['id'] . ";");
                     $conn->query("UPDATE `users` SET `avatar` = '" . $avatar . "' WHERE `users`.`id` = " . $_GET['id'] . ";");
                     $conn->query("UPDATE `users` SET `email` = '" . $email . "' WHERE `users`.`id` = " . $_GET['id'] . ";");
                     $conn->close();
@@ -142,7 +143,7 @@ if (isset($_GET['edit_user'])) {
                                                     <label for="username" class="form-label">Username</label>
                                                     <input class="form-control" type="text" id="username"
                                                         name="username"
-                                                        value="<?= decrypt($user_info['username'], $ekey) ?>"
+                                                        value="<?= eh::decrypt($user_info['username'], $ekey) ?>"
                                                         placeholder="jhondoe" />
                                                 </div>
                                                 <div class="mb-3 col-md-6">
@@ -167,14 +168,14 @@ if (isset($_GET['edit_user'])) {
                                                     <label for="firstName" class="form-label">First Name</label>
                                                     <input class="form-control" type="text" id="firstName"
                                                         name="firstName"
-                                                        value="<?= decrypt($user_info['first_name'], $ekey) ?>"
+                                                        value="<?= eh::decrypt($user_info['first_name'], $ekey) ?>"
                                                         autofocus />
                                                 </div>
                                                 <div class="mb-3 col-md-6">
                                                     <label for="lastName" class="form-label">Last Name</label>
                                                     <input class="form-control" type="text" name="lastName"
                                                         id="lastName"
-                                                        value="<?= decrypt($user_info['last_name'], $ekey) ?>" />
+                                                        value="<?= eh::decrypt($user_info['last_name'], $ekey) ?>" />
                                                 </div>
                                                 <div class="mb-3 col-md-6">
                                                     <label for="email" class="form-label">E-mail</label>
@@ -212,14 +213,14 @@ if (isset($_GET['edit_user'])) {
                                             <div class="mb-3 col-md-6">
                                                 <label for="first_ip" class="form-label">First ip</label>
                                                 <input class="form-control" type="text" id="first_ip" name="first_ip"
-                                                    value="<?= decrypt($user_info['first_ip'],$ekey) ?>"
-                                                    placeholder="<?= decrypt($user_info['first_ip'],$ekey) ?>" readonly="true" disabled="true"/>
+                                                    value="<?= eh::decrypt($user_info['first_ip'],$ekey) ?>"
+                                                    placeholder="<?= eh::decrypt($user_info['first_ip'],$ekey) ?>" readonly="true" disabled="true"/>
                                             </div>
                                             <div class="mb-3 col-md-6">
                                                 <label for="last_ip" class="form-label">Last ip</label>
                                                 <input class="form-control" type="text" id="last_ip" name="last_ip"
-                                                    value="<?= decrypt($user_info['last_ip'],$ekey) ?>"
-                                                    placeholder="<?= decrypt($user_info['last_ip'],$ekey) ?>" readonly="true" disabled="true"/>
+                                                    value="<?= eh::decrypt($user_info['last_ip'],$ekey) ?>"
+                                                    placeholder="<?= eh::decrypt($user_info['last_ip'],$ekey) ?>" readonly="true" disabled="true"/>
                                             </div>
                                             <div class="mb-3 col-md-6">
                                                 <label for="registred" class="form-label">Registred</label>
